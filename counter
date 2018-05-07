@@ -1,0 +1,7 @@
+#!/bin/bash
+
+sqlite3 stock_quotes.db << EOF
+.headers on
+SELECT symbol, COUNT(*) as "count" FROM stock_quotes GROUP BY symbol;
+EOF
+

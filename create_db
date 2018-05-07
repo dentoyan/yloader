@@ -1,0 +1,33 @@
+#!/bin/bash
+# create a new stock database
+
+sqlite3 stock_quotes.db << EOF
+.headers on
+CREATE TABLE stock_quotes (
+
+  symbol TEXT NOT NULL,
+  date DATE NOT NULL,
+
+  open REAL,
+  high REAL,
+  low REAL,
+  close REAL NOT NULL,
+
+  volume REAL,
+  PRIMARY KEY (symbol, date)
+);
+
+CREATE UNIQUE INDEX stock_quote_index ON stock_quotes(symbol, date);
+
+CREATE TABLE watchlist (
+
+  symbol TEXT NOT NULL
+);
+
+INSERT INTO "watchlist" VALUES('BAS.DE');
+INSERT INTO "watchlist" VALUES('BMW.DE');
+INSERT INTO "watchlist" VALUES('RWE.DE');
+INSERT INTO "watchlist" VALUES('VOW.DE');
+
+EOF
+
