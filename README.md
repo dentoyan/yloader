@@ -1,6 +1,6 @@
 # Yahoo Stock quote loader #
 
-Pull stock data from yahoo finance website into a sqlite3 database.
+Pull stock data from yahoo finance into a sqlite3 database.
 
 ## Features ##
 

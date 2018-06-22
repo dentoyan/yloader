@@ -205,7 +205,7 @@ class Loader(object):
         if not self.__fetch_range(symbol, range):
             return False
         t2 = self.get_recent_date(symbol)
-        return t2 > t1
+        return (t1 is None and t2 is not None) or (t2 > t1)
 
     def fetch(self, symbol = None, r = None):
         if symbol:
