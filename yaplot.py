@@ -45,6 +45,13 @@ def createParser():
     )
 
   parser.add_option(
+    '--offset',
+    type='int',
+    help='offset',
+    dest='offset',
+    )
+
+  parser.add_option(
     '--range',
     type='string',
     help='time range as iso YYYY-MM-DD:YYYY-MM-DD',
@@ -85,6 +92,27 @@ class Plotter(object):
             self.y[0].append(r[1])
             self.y[1].append(r[2])
 
+
+    def fetch_offset(self, symbol, offset):
+        '''
+        fetch data
+        '''
+        self.symbol = symbol
+        sql = "SELECT date, low, high FROM (\
+                SELECT * from stock_quotes WHERE \
+                symbol=\'%s\' order by date DESC LIMIT %d) T1\
+                ORDER BY date;" % (symbol, offset)
+        cursor = self.db.cursor()
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        assert result, "No data"
+        self.x = []
+        self.y = [ [], [] ]
+        for r in result:
+            ts = dateutil.parser.parse(r[0])
+            self.x.append(ts)
+            self.y[0].append(r[1])
+            self.y[1].append(r[2])
 
     def plot(self):
         fig, ax = plt.subplots()
@@ -128,7 +156,10 @@ if __name__ == '__main__':
         print('no stock symbol specified')
         sys.exit(1)
     p = Plotter(options.database)
-    p.fetch(options.symbol, options.range)
+    if options.offset:
+        p.fetch_offset(options.symbol, options.offset)
+    else:
+        p.fetch(options.symbol, options.range)
     p.plot()
 
 

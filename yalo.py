@@ -76,6 +76,7 @@ class Loader(object):
         assert False, "Did not find CrumbStore"
 
     def get_cookie_value(self, r):
+        #print(r.cookies)
         return {'B': r.cookies['B']}
 
     def get_page_data(self, symbol):
@@ -100,9 +101,11 @@ class Loader(object):
         url = "https://query1.finance.yahoo.com/v7/finance/download/%s?period1=%s&period2=%s&interval=1d&events=history&crumb=%s" % \
             (symbol, repr(r[0]), repr(r[1]), crumb)
         response = requests.get(url, cookies=cookie)
-        text = response.iter_lines()
-        self.csv = csv.reader(text, delimiter=',')
-        return self.write(symbol)
+        response.encoding = 'utf-8'
+        #text = response.iter_lines()
+        with io.StringIO(response.text) as mem_file:
+            self.csv = csv.reader(mem_file, delimiter=',')
+            return self.write(symbol)
 
     def insert(self, symbol, v):
         '''
@@ -213,7 +216,7 @@ class Loader(object):
         else:
             rv = False
             for s in self.get_symbols():
-                print("fetch: %s" % (s))
+                #print("fetch: %s" % (s))
                 if self.fetch_range(s, self.get_range(s, r)):
                     rv = True
             # at least one value transmitted
